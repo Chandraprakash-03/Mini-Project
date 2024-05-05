@@ -56,9 +56,17 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const userSnapshot = await usersRef.child(patientId).once('value');
         const userData = userSnapshot.val();
+
+        // Check if user data exists
         if (!userData) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        // Check if password property exists in user data
+        if (!userData.password) {
+            return res.status(400).json({ error: 'User data incomplete' });
+        }
+
         const isPasswordValid = await bcrypt.compare(password, userData.password);
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid password' });
@@ -70,6 +78,7 @@ app.post('/api/auth/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // Endpoint to Book Appointments with Scheduling Conflicts Detection
 app.post('/api/appointments/book', async (req, res) => {
