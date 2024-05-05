@@ -77,12 +77,12 @@ app.post('/api/appointments/book', async (req, res) => {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { name, age, uid, hospital, appointmentDateTime } = req.body;
+    const { name, age, email, hospital, appointmentDateTime } = req.body;
     const newAppointment = {
         id: Date.now().toString(), // Generate a unique ID for the appointment
         name,
         age,
-        uid,
+        email,
         hospital,
         appointmentDateTime,
     };
@@ -157,12 +157,12 @@ app.post('/api/appointments/book-selected', async (req, res) => {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { name, age, uid, appointmentDateTime, selectedHospital } = req.body;
+    const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
     const newAppointment = {
         id: Date.now().toString(), // Generate a unique ID for the appointment
         name,
         age,
-        uid,
+        email,
         appointmentDateTime,
         // symptoms,
         hospital: selectedHospital, // Include the selected hospital in the appointment data
