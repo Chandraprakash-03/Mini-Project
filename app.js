@@ -98,6 +98,11 @@ app.post('/api/appointments/book', async (req, res) => {
     };
 
     try {
+        // Check if user is authenticated and session contains user data
+        if (!req.session || !req.session.user || !req.session.user.patientId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
         // Check for scheduling conflicts
         const existingAppointments = await usersRef
             .child(req.session.user.patientId)
@@ -125,6 +130,7 @@ app.post('/api/appointments/book', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // Function to check for scheduling conflicts
 function checkConflict(existingDateTime, newDateTime) {
