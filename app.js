@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
-const session = require('express-session');
 const PDFDocument = require('pdfkit');
 const Chart = require('chart.js');
 const fs = require('fs');
@@ -25,11 +24,6 @@ const usersRef = db.ref('users');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
-    secret: 'your_session_secret_here',
-    resave: false,
-    saveUninitialized: false,
-}));
 
 // Registration Endpoint with Password Hashing
 app.post('/api/auth/register', async (req, res) => {
@@ -82,10 +76,6 @@ app.post('/api/auth/login', async (req, res) => {
 
 // Endpoint to Book Appointments with Scheduling Conflicts Detection
 app.post('/api/appointments/book', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { name, age, email, hospital, appointmentDateTime } = req.body;
     const newAppointment = {
         id: Date.now().toString(), // Generate a unique ID for the appointment
@@ -142,10 +132,6 @@ function checkConflict(existingDateTime, newDateTime) {
 
 // Endpoint to Get Hospital Recommendations
 app.post('/api/appointments/recommend-hospitals', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { symptoms } = req.body;
 
     try {
@@ -162,10 +148,6 @@ app.post('/api/appointments/recommend-hospitals', async (req, res) => {
 
 // Endpoint to Book Appointment with Selected Hospital
 app.post('/api/appointments/book-selected', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
     const newAppointment = {
         id: Date.now().toString(), // Generate a unique ID for the appointment
@@ -275,10 +257,6 @@ app.delete('/api/appointments/:id', async (req, res) => {
 
 // Endpoint to Get User's Appointments
 app.get('/api/appointments/my-appointments', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     try {
         const userAppointmentsSnapshot = await usersRef.child(req.session.user.patientId).child('appointments').once('value');
         const userAppointments = [];
@@ -368,10 +346,6 @@ app.get('/api/download/ehr/:userId', async (req, res) => {
 });
 
 app.post('/api/expenses/add', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { date, description, amount } = req.body;
     const newExpense = { date, description, amount };
 
@@ -386,10 +360,6 @@ app.post('/api/expenses/add', async (req, res) => {
 
 // Endpoint to Fetch All Medical Expenses
 app.get('/api/expenses/all', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     try {
         const expensesSnapshot = await usersRef.child(req.session.user.patientId).child('medicalExpenses').once('value');
         const expenses = [];
