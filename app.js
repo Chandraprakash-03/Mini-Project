@@ -4,6 +4,7 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const PDFDocument = require('pdfkit');
+const session = require('express-session');
 const Chart = require('chart.js');
 const fs = require('fs');
 const path = require('path');
@@ -24,6 +25,15 @@ const usersRef = db.ref('users');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Add session middleware
+app.use(session({
+    secret: 'your_secret_key', // Replace 'your_secret_key' with a strong secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set secure to true if using HTTPS
+}));
+
 
 // Registration Endpoint with Password Hashing
 app.post('/api/auth/register', async (req, res) => {
@@ -65,14 +75,15 @@ app.post('/api/auth/login', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid password' });
         }
-        req.session.user = { patientId, email: userData.email }; // Save user data in session
+
+        // Set user data in session
+        req.session.user = { patientId, email: userData.email };
         res.json({ success: true, message: 'Login successful', userData: req.session.user });
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 
 // Endpoint to Book Appointments with Scheduling Conflicts Detection
 app.post('/api/appointments/book', async (req, res) => {
