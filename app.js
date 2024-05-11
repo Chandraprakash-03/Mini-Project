@@ -165,25 +165,25 @@ app.post('/api/appointments/recommend-hospitals', async (req, res) => {
 
 // Endpoint to Book Appointment with Selected Hospital
 app.post('/api/appointments/book-selected', async (req, res) => {
-    const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
-    const newAppointment = {
-        id: Date.now().toString(), // Generate a unique ID for the appointment
-        name,
-        age,
-        email,
-        appointmentDateTime,
-        // symptoms,
-        hospital: selectedHospital, // Include the selected hospital in the appointment data
-    };
-
     try {
-        // Check for scheduling conflicts 
-        const existingAppointments = await usersRef
-            .child(req.session.user.patientId)
-            .child('appointments')
-            .once('value');
+        if (!req.session || !req.session.user || !req.session.user.patientId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
 
+        const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
+        const newAppointment = {
+            id: Date.now().toString(),
+            name,
+            age,
+            email,
+            appointmentDateTime,
+            hospital: selectedHospital,
+        };
+
+        // Check for scheduling conflicts
+        const existingAppointments = await usersRef.child(req.session.user.patientId).child('appointments').once('value');
         let hasConflict = false;
+
         existingAppointments.forEach((childSnapshot) => {
             const existingAppointment = childSnapshot.val();
             if (checkConflict(existingAppointment.appointmentDateTime, appointmentDateTime)) {
@@ -192,21 +192,17 @@ app.post('/api/appointments/book-selected', async (req, res) => {
         });
 
         if (hasConflict) {
-            // Scheduling conflict detected, inform the user
-            res.status(409).json({ error: 'Scheduling conflict detected. Please choose another time slot.' });
-        }
-        else {
-            // No conflict, proceed with booking the appointment
-            await usersRef.child(req.session.user.patientId).child('appointments').push(newAppointment);
-            // Return response with the newly booked appointment
-            res.status(201).json({ appointment: newAppointment });
+            return res.status(409).json({ error: 'Scheduling conflict detected. Please choose another time slot.' });
         }
 
+        await usersRef.child(req.session.user.patientId).child('appointments').push(newAppointment);
+        res.status(201).json({ appointment: newAppointment });
     } catch (error) {
         console.error('Error booking appointment:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // Function to recommend hospitals based on symptoms
 async function recommendHospitals(symptoms) {
@@ -275,11 +271,17 @@ app.delete('/api/appointments/:id', async (req, res) => {
 // Endpoint to Get User's Appointments
 app.get('/api/appointments/my-appointments', async (req, res) => {
     try {
+        if (!req.session || !req.session.user || !req.session.user.patientId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
         const userAppointmentsSnapshot = await usersRef.child(req.session.user.patientId).child('appointments').once('value');
         const userAppointments = [];
+
         userAppointmentsSnapshot.forEach((childSnapshot) => {
             userAppointments.push(childSnapshot.val());
         });
+
         res.json(userAppointments);
     } catch (error) {
         console.error('Error getting user appointments:', error);
