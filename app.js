@@ -108,10 +108,10 @@ app.post('/api/appointments/book-selected', async (req, res) => {
 
         existingAppointments.forEach((childSnapshot) => {
             const existingAppointment = childSnapshot.val();
-            const appointmentDateTime = new Date(`${existingAppointment.appointmentDate} ${existingAppointment.appointmentTime}`).toISOString();
-            const newDateTime = new Date(`${appointmentDate} ${appointmentTime}`).toISOString();
+            const existingAppointmentDate = existingAppointment.appointmentDate;
+            const existingAppointmentTime = existingAppointment.appointmentTime;
 
-            if (checkConflict(appointmentDateTime, newDateTime)) {
+            if (existingAppointmentDate === appointmentDate && existingAppointmentTime === appointmentTime) {
                 hasConflict = true;
             }
         });
@@ -120,13 +120,15 @@ app.post('/api/appointments/book-selected', async (req, res) => {
             return res.status(409).json({ error: 'Scheduling conflict detected. Please choose another time slot.' });
         }
 
-        await usersRef.child('users').child('5678').child('appointments').push(newAppointment);
+        // Corrected path to push the new appointment
+        await usersRef.child('5678').child('appointments').push(newAppointment);
         res.status(201).json({ appointment: newAppointment });
     } catch (error) {
         console.error('Error booking appointment:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 // Function to recommend hospitals based on symptoms
 async function recommendHospitals(symptoms) {
     const recommendedHospitals = [];
