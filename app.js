@@ -103,7 +103,7 @@ app.post('/api/appointments/book-selected', async (req, res) => {
         };
 
         // Check for scheduling conflicts
-        const existingAppointments = await usersRef.child(patientId).child('appointments').once('value');
+        const existingAppointments = await usersRef.child('5678').child('appointments').once('value');
         let hasConflict = false;
 
         existingAppointments.forEach((childSnapshot) => {
@@ -120,7 +120,7 @@ app.post('/api/appointments/book-selected', async (req, res) => {
             return res.status(409).json({ error: 'Scheduling conflict detected. Please choose another time slot.' });
         }
 
-        await usersRef.child(patientId).child('appointments').push(newAppointment);
+        await usersRef.child('5678').child('appointments').push(newAppointment);
         res.status(201).json({ appointment: newAppointment });
     } catch (error) {
         console.error('Error booking appointment:', error);
