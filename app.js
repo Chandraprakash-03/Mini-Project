@@ -171,7 +171,7 @@ app.post('/api/appointments/book-selected', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-        const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
+        const { name, age, email, appointmentDate, appointmentTime, selectedHospital } = req.body;
         console.log(req.body);
 
         const newAppointment = {
@@ -179,8 +179,9 @@ app.post('/api/appointments/book-selected', async (req, res) => {
             name,
             age,
             email,
-            appointmentDateTime,
-            hospital: selectedHospital,
+            appointmentDate,
+            appointmentTime,
+            hospital: selectedHospital
         };
 
         // Check for scheduling conflicts
