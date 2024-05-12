@@ -49,7 +49,7 @@ app.post('/api/auth/register', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         await usersRef.child(patientId).set({ email, password: hashedPassword, patientId, appointments: [] });
-        req.session.user = { patientId, email }; // Save user data in session
+        req.session.user = { patientId, email };
         res.json({ success: true, message: 'User registered successfully', userData: req.session.user });
     } catch (error) {
         console.error('Error registering user:', error);
@@ -78,8 +78,6 @@ app.post('/api/auth/login', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid password' });
         }
-
-        // Set user data in session
         req.session.user = { patientId, email: userData.email };
         res.json({ success: true, message: 'Login successful', userData: req.session.user });
     } catch (error) {
@@ -174,6 +172,8 @@ app.post('/api/appointments/book-selected', async (req, res) => {
     }
 
         const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
+        console.log(req.body);
+
         const newAppointment = {
             id: Date.now().toString(),
             name,
