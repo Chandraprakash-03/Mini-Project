@@ -168,10 +168,10 @@ app.post('/api/appointments/recommend-hospitals', async (req, res) => {
 
 // Endpoint to Book Appointment with Selected Hospital
 app.post('/api/appointments/book-selected', async (req, res) => {
-    try {
-        if (!req.session || !req.session.user || !req.session.user.patientId) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+  try {
+    if (!req.session || !req.session.user || !req.session.user.patientId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
         const { name, age, email, appointmentDateTime, selectedHospital } = req.body;
         const newAppointment = {
