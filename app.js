@@ -127,6 +127,55 @@ app.post('/api/appointments/book-selected', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// Function to recommend hospitals based on symptoms
+async function recommendHospitals(symptoms) {
+    const recommendedHospitals = [];
+
+    //Example Logic for Hospital recommendation
+    if (symptoms.includes('headache')) {
+        recommendedHospitals.push({ name: 'Hospital A', location: 'City A', specialties: ['Neurology'] });
+        recommendedHospitals.push({ name: 'Hospital B', location: 'City B', specialties: ['Neurology'] });
+    }
+
+    
+    if (symptoms.includes('fracture')) {
+        recommendedHospitals.push({ name: 'Hospital C', location: 'City C', specialties: ['Orthopedics'] });
+        recommendedHospitals.push({ name: 'Hospital D', location: 'City D', specialties: ['Orthopedics'] });
+    }
+
+    
+    if (symptoms.includes('fever')) {
+        recommendedHospitals.push({ name: 'Hospital E', location: 'City E', specialties: ['Infectious Diseases'] });
+        recommendedHospitals.push({ name: 'Hospital F', location: 'City F', specialties: ['Infectious Diseases'] });
+    }
+
+    
+    if (symptoms.includes('chest pain')) {
+        recommendedHospitals.push({ name: 'Hospital G', location: 'City G', specialties: ['Cardiology'] });
+        recommendedHospitals.push({ name: 'Hospital H', location: 'City H', specialties: ['Cardiology'] });
+    }
+
+    
+    if (symptoms.includes('difficulty breathing')) {
+        recommendedHospitals.push({ name: 'Hospital I', location: 'City I', specialties: ['Pulmonology'] });
+        recommendedHospitals.push({ name: 'Hospital J', location: 'City J', specialties: ['Pulmonology'] });
+    }
+
+
+    if (symptoms.includes('abdominal pain')) {
+        recommendedHospitals.push({ name: 'Hospital K', location: 'City K', specialties: ['Gastroenterology'] });
+        recommendedHospitals.push({ name: 'Hospital L', location: 'City L', specialties: ['Gastroenterology'] });
+    }
+
+
+    if (symptoms.includes('rash')) {
+        recommendedHospitals.push({ name: 'Hospital M', location: 'City M', specialties: ['Dermatology'] });
+        recommendedHospitals.push({ name: 'Hospital N', location: 'City N', specialties: ['Dermatology'] });
+    }
+
+    return recommendedHospitals;
+}
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
