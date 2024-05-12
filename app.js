@@ -22,7 +22,10 @@ const db = admin.database();
 const usersRef = db.ref('users');
 
 // Middleware
-app.use(cors());
+app.use(cors({
+     origin: true,
+  credentials: true
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
