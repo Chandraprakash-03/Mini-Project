@@ -28,10 +28,10 @@ app.use(bodyParser.json());
 
 // Add session middleware
 app.use(session({
-    secret: 'your_secret_key', // Replace 'your_secret_key' with a strong secret
+    secret: 'your_secret_key', 
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set secure to true if using HTTPS
+    cookie: { secure: true } 
 }));
 
 
