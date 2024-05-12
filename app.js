@@ -120,7 +120,7 @@ app.post('/api/appointments/book-selected', async (req, res) => {
             return res.status(409).json({ error: 'Scheduling conflict detected. Please choose another time slot.' });
         }
 
-        await usersRef.child('5678').child('appointments').push(newAppointment);
+        await usersRef.child('users').child('5678').child('appointments').push(newAppointment);
         res.status(201).json({ appointment: newAppointment });
     } catch (error) {
         console.error('Error booking appointment:', error);
