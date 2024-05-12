@@ -90,7 +90,7 @@ app.post('/api/appointments/recommend-hospitals', async (req, res) => {
 // Endpoint to Book Appointment with Selected Hospital
 app.post('/api/appointments/book-selected', async (req, res) => {
     try {
-        const { name, age, email, appointmentDate, appointmentTime, selectedHospital, patientId } = req.body;
+        const { name, age, email, appointmentDate, appointmentTime, selectedHospital } = req.body;
 
         const newAppointment = {
             id: Date.now().toString(),
